@@ -4,107 +4,134 @@ import { render } from 'react-dom';
 import { StyleSheet, Text, View, Button, Alert} from 'react-native';
 
 
+class Counter extends React.Component {
+  constructor(){
+    super()
+    this.state = {
+      count: 120,
+      display_timer: {},
+    }
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(this.dinc, 1000)
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.interval)
+  }
+
+    // // https://stackoverflow.com/questions/51695887/countdown-timer-in-react-native
+  componentDidUpdate(){
+    if(this.state.count === 0){
+      clearInterval(this.interval)
+    }
+  }
+
+  secondsToTime(secs){
+
+    let hours = Math.floor(secs / (60 * 60))
+
+    let divisor_for_mins = secs % (60 * 60)
+    let mins = Math.floor(divisor_for_mins / 60)
+
+    let divisor_for_seconds = divisor_for_mins % 60
+    let seconds = Math.ceil(divisor_for_seconds)
+
+    let obj = {
+      'h': hours,
+      'm': mins,
+      's': seconds 
+    };
+
+    return obj
+  }
+
+  dinc = () => {
+    this.setState(prevState => ({
+      count: prevState.count - 1,
+      display_timer: this.secondsToTime(prevState.count - 1)
+    }))
+  }
+
+
+
+  render(){ 
+          return (
+              <View>
+                <Text>{this.state.display_timer.m}:{this.state.display_timer.s}</Text>
+              </View>
+              )
+        }
+}
+
 
 export default class App extends React.Component {
-    constructor(props){
-      super(props);
-      this.state = {
-        time: {}, seconds: 100
-      }
-      this.timer = 0
+  constructor(){
+    super()
+    this.state = {
+       showCounter: true
     }
+  }
 
-    // converting seconds into hrs mins and secs 
-    secondsToTime(secs){
-      let hours = Math.floor(secs / (60 * 60))
-
-      let divisor_for_minutes = secs % (60 * 60)
-      let minutes = Math.floor(divisor_for_minutes / 60)
-
-      let divisor_for_seconds = divisor_for_minutes % 60
-      let seconds = Math.ceil(divisor_for_seconds)
-
-      let obj = {
-        "h": hours,
-        "m": minutes,
-        "s": seconds
-      };
-      return obj;
-    }
-
-      componentDidMount(){
-        let timeLeftVar = this.secondsToTime(this.state.seconds)
-        this.setState({time: timeLeftVar})
-      }
-
-      startTimer = () => {
-        if(this.timer == 0 && this.state.seconds > 0) {
-          this.timer = setInterval(this.countDown, 1000)
-        }
-      }
-
-      countDown = () => {
-        // Removing a second, and set a state so rerendering occurs.
-        let seconds = this.state.seconds - 1
-        this.setState({
-          time: this.secondsToTime(seconds),
-          seconds: seconds
-        })
-
-        if (seconds == 0) {
-          clearInterval(this.timer)
-        }
-      }
-
-  //  start = () => {
-  //                 this.interval = setInterval(() => {
-  //                   this.setState({timer: this.state.timer -1})
-  //                 }, 1000)
-  //                 // Alert.alert('This is going to be start button')
-  // }
-
-  // // https://stackoverflow.com/questions/51695887/countdown-timer-in-react-native
-  // componentDidUpdate(){
-  //   if(this.state.timer === 0){
-  //     clearInterval(this.interval)
-  //   }
-  // }
-
-  // componentWillUnmount(){
-  //   clearInterval(this.interval)
-  // }
+  toggleCounter = () => this.setState(prevState => ({
+    showCounter: !prevState.showCounter
+  }))
 
 
   pause = () => {
-                  Alert.alert('This is going to be a pause button')
+    Alert.alert('This is going to be a pause button')
   }
 
   stop = () => {
-                  Alert.alert('This is going to be a stop button')
+      Alert.alert('This is going to be a stop button')
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>{this.state.time.m} mins {this.state.time.s} secs</Text>
-        <View style={styles.buttonContainer}>
-          <Button 
-            title="Start"
-            onPress={this.startTimer}
-          />
-          <Button 
-            title="Pause"
-            onPress={this.pause}
-          />
-          <Button 
-            title="Stop"
-            onPress={this.stop}
-          />
-        </View>
-      </View>
-    );
-  }
-}
+
+  render(){
+            if(this.state.showCounter){
+                return (
+                        <View style={styles.container}>
+                          <Counter />
+                            <View style={styles.buttonContainer}>
+                              <Button 
+                                title="Start"
+                                onPress={this.toggleCounter}
+                              />
+                              <Button  
+                                title="Pause"
+                                onPress={this.pause}
+                              />
+                              <Button 
+                                title="Stop"
+                                onPress={this.stop}
+                              />
+                          </View>
+                        </View>
+                      )
+            } else {
+                      return (
+                          <View style={styles.container}>
+                            <View style={styles.buttonContainer}>
+                              <Button 
+                                title="Start"
+                                onPress={this.toggleCounter}
+                              />
+                              <Button  
+                                title="Pause"
+                                onPress={this.pause}
+                              />
+                              <Button 
+                                title="Stop"
+                                onPress={this.stop}
+                              />
+                            </View>
+                          </View>
+                            )
+            }
+          }
+        }
+
 
 const styles = StyleSheet.create({
   container: {
