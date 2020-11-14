@@ -1,15 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { render } from 'react-dom';
-import { StyleSheet, Text, View, Button, Alert} from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, Vibration} from 'react-native';
+
 
 
 class Counter extends React.Component {
   constructor(){
     super()
     this.state = {
-      count: 120,
+      count: 1500,
       display_timer: {},
+      timer_count: 0
     }
   }
 
@@ -21,12 +23,7 @@ class Counter extends React.Component {
     clearInterval(this.interval)
   }
 
-    // // https://stackoverflow.com/questions/51695887/countdown-timer-in-react-native
-  componentDidUpdate(){
-    if(this.state.count === 0){
-      clearInterval(this.interval)
-    }
-  }
+ 
 
   secondsToTime(secs){
 
@@ -54,28 +51,41 @@ class Counter extends React.Component {
     }))
   }
 
+     // // https://stackoverflow.com/questions/51695887/countdown-timer-in-react-native
+  componentDidUpdate(){
+  if(this.state.timer_count === 0 && this.state.count === 0){
+    Vibration.vibrate()
+    this.setState(prevState => ({
+      count: prevState.count + 300,
+      timer_count: prevState.timer_count + 1 
+    }))
+  } else if (this.state.timer_count === 1 && this.state.count === 0) {
+    Vibration.vibrate()
+    clearInterval(this.interval)
+  }
+}
 
-
-  render(){ 
-          return (
+  render(){
+            return (
               <View>
                 <Text>{this.state.display_timer.m}:{this.state.display_timer.s}</Text>
               </View>
               )
+          }
         }
-}
+
 
 
 export default class App extends React.Component {
   constructor(){
     super()
     this.state = {
-       showCounter: true
+       startCounter: true
     }
   }
 
   toggleCounter = () => this.setState(prevState => ({
-    showCounter: !prevState.showCounter
+    startCounter: !prevState.startCounter
   }))
 
 
@@ -89,22 +99,14 @@ export default class App extends React.Component {
 
 
   render(){
-            if(this.state.showCounter){
+            if(this.state.startCounter){
                 return (
                         <View style={styles.container}>
                           <Counter />
                             <View style={styles.buttonContainer}>
                               <Button 
-                                title="Start"
-                                onPress={this.toggleCounter}
-                              />
-                              <Button  
-                                title="Pause"
-                                onPress={this.pause}
-                              />
-                              <Button 
                                 title="Stop"
-                                onPress={this.stop}
+                                onPress={this.toggleCounter}
                               />
                           </View>
                         </View>
@@ -116,14 +118,6 @@ export default class App extends React.Component {
                               <Button 
                                 title="Start"
                                 onPress={this.toggleCounter}
-                              />
-                              <Button  
-                                title="Pause"
-                                onPress={this.pause}
-                              />
-                              <Button 
-                                title="Stop"
-                                onPress={this.stop}
                               />
                             </View>
                           </View>
