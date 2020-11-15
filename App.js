@@ -3,6 +3,14 @@ import React from 'react';
 import { render } from 'react-dom';
 import { StyleSheet, Text, View, Button, Alert, Vibration} from 'react-native';
 
+const Title = (props) => {
+  return(
+          <View>
+                <Text style={styles.gen_font}>{props.title}</Text>
+          </View>
+  )
+}
+
 
 
 class Counter extends React.Component {
@@ -68,7 +76,7 @@ class Counter extends React.Component {
   render(){
             return (
               <View>
-                <Text>{this.state.display_timer.m}:{this.state.display_timer.s}</Text>
+                <Text style={styles.gen_font}>{this.state.display_timer.m}:{this.state.display_timer.s}</Text>
               </View>
               )
           }
@@ -88,43 +96,43 @@ export default class App extends React.Component {
     startCounter: !prevState.startCounter
   }))
 
+  // pause = () => {
+  //   Alert.alert('This is going to be a pause button')
+  // }
 
-  pause = () => {
-    Alert.alert('This is going to be a pause button')
-  }
+  // stop = () => {
+  //     Alert.alert('This is going to be a stop button')
+  // }
 
-  stop = () => {
-      Alert.alert('This is going to be a stop button')
-  }
-
-
-  render(){
-            if(this.state.startCounter){
-                return (
-                        <View style={styles.container}>
-                          <Counter />
-                            <View style={styles.buttonContainer}>
-                              <Button 
-                                title="Stop"
-                                onPress={this.toggleCounter}
-                              />
-                          </View>
+render(){
+          if(this.state.startCounter){
+              return (
+                      <View style={styles.container}>
+                        <Title title={"Pomodoro Timer"}/>
+                        <Counter />
+                          <View style={styles.buttonContainer}>
+                            <Button 
+                              title="Stop"
+                              onPress={this.toggleCounter}
+                            />
                         </View>
-                      )
-            } else {
-                      return (
-                          <View style={styles.container}>
-                            <View style={styles.buttonContainer}>
+                      </View>
+                    )
+          } else {
+                    return (
+                        <View style={styles.container}>
+                          <Title title={"Pomodoro Timer"}/>
+                          <View style={styles.buttonContainer}>
                               <Button 
                                 title="Start"
                                 onPress={this.toggleCounter}
                               />
-                            </View>
                           </View>
-                            )
-            }
+                        </View>
+                          )
           }
         }
+      }
 
 
 const styles = StyleSheet.create({
@@ -137,5 +145,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  gen_font: {
+    fontSize: 48,
   }
 });
